@@ -1,1 +1,16 @@
-.idea
+.idea/
+target/
+build/
+project/boot
+
+.history
+.DS_Store
+*~
+
+.gradle
+
+*.iml
+
+*.log
+
+*.pem
