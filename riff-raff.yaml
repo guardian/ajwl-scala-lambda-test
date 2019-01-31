@@ -1,7 +1,7 @@
 stacks: [playground]
 regions: [eu-west-1]
 templates:
-  <name of project>:
+  ajwl-scala-lambda-test:
     type: aws-lambda
     app: ajwl-scala-lambda-test
     contentDirectory: ajwl-scala-lambda-test
@@ -12,6 +12,6 @@ templates:
       prefixStack: false
 
 deployments:
-ajwl-scala-lambda-test-upload:
-  template: ajwl-scala-lambda-test
-  actions: [uploadLambda]
+  ajwl-scala-lambda-test-upload:
+    template: ajwl-scala-lambda-test
+    actions: [uploadLambda]
