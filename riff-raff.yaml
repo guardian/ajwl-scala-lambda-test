@@ -15,3 +15,17 @@ deployments:
   ajwl-scala-lambda-test-upload:
     template: ajwl-scala-lambda-test
     actions: [uploadLambda]
+
+  ajwl-scala-lambda-test-cfn:
+    type: cloud-formation
+    app: ajwl-scala-lambda-test
+    dependencies: [ajwl-scala-lambda-test-upload]
+    parameters:
+      prependStackToCloudFormationStackName: false
+      cloudFormationStackName: ajwl-scala-lambda-test
+      templatePath: cfn.yaml
+
+  ajwl-scala-lambda-test-lambda-update:
+    template: ajwl-scala-lambda-test
+    actions: [updateLambda]
+    dependencies: [ajwl-scala-lambda-test-cfn]
