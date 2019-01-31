@@ -1,0 +1,17 @@
+stacks: [playground]
+regions: [eu-west-1]
+templates:
+  <name of project>:
+    type: aws-lambda
+    app: ajwl-scala-lambda-test
+    contentDirectory: ajwl-scala-lambda-test
+    parameters:
+      bucket: gu-ajwl-scala-lambda-test-dist
+      functionNames: [ajwl-scala-lambda-test-]
+      fileName:  ajwl-scala-lambda-test.zip
+      prefixStack: false
+
+deployments:
+ajwl-scala-lambda-test-upload:
+  template: ajwl-scala-lambda-test
+  actions: [uploadLambda]
