@@ -51,6 +51,13 @@ Resources:
               Action:
                 -  lambda:InvokeFunction
               Resource: "*"
+        - PolicyName: api
+          PolicyDocument:
+            Statement:
+              Effect: Allow
+              Action:
+                - execute-api:Invoke
+              Resource: "*"
 
   WorkshopLambda:
     Type: AWS::Lambda::Function
@@ -72,3 +79,67 @@ Resources:
       Role: !GetAtt ExecutionRole.Arn
       Runtime: java8
       Timeout: 300
+
+  WorkshopApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Description: Api to call our lambda
+      Name: !Sub ${App}-api-${Stage}
+
+  WorkshopApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref WorkshopApi
+      ParentId: !GetAtt [WorkshopApi, RootResourceId]
+      PathPart: helloWorld
+    DependsOn: WorkshopApi
+
+  WorkshopApiMethod:
+      Type: AWS::ApiGateway::Method
+      Properties:
+        AuthorizationType: NONE
+        RestApiId: !Ref WorkshopApi
+        ResourceId: !Ref WorkshopApiResource
+        HttpMethod: POST
+        Integration:
+          Type: AWS_PROXY
+          IntegrationHttpMethod: POST
+          Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${WorkshopLambda.Arn}/invocations
+      DependsOn:
+        - WorkshopApi
+        - WorkshopLambda
+        - WorkshopApiResource
+
+  WorkshopApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      Description: Deploys the API into an environment/stage
+      RestApiId: !Ref WorkshopApi
+    DependsOn: WorkshopApiMethod
+
+  WorkshopApiStageProd:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      StageName: !Ref Stage
+      Description: Prod Stage
+      RestApiId: !Ref WorkshopApi
+      DeploymentId: !Ref WorkshopApiDeployment
+      Variables:
+        Stack: !Ref Stack
+      MethodSettings:
+        - ResourcePath: /helloWorld
+          HttpMethod: POST
+          MetricsEnabled: 'true'
+          DataTraceEnabled: 'true'
+          ThrottlingBurstLimit: '999'
+    DependsOn:
+      - WorkshopApi
+      - WorkshopApiDeployment
+
+  WorkshopLambdaInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Sub ${App}-${Stage}
+      Principal: apigateway.amazonaws.com
+    DependsOn: WorkshopLambda
