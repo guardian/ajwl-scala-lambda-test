@@ -67,7 +67,7 @@ Resources:
           Stack: !Ref Stack
           App: !Ref App
       Description: Test lambda for workshop
-      Handler: com.gu.ajwl-scala-lambda-test.Lambda::handler
+      Handler: com.gu.microserviceWorkshop.Lambda::handler
       MemorySize: 512
       Role: !GetAtt ExecutionRole.Arn
       Runtime: java8
