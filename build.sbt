@@ -25,6 +25,9 @@ libraryDependencies ++= Seq(
     exclude("com.chuusai", "shapeless_sjs0.6_2.11")
 )
 
+libraryDependencies += "com.amazonaws" % "aws-java-sdk-s3" % "1.11.521"
+libraryDependencies += "com.amazonaws" % "aws-java-sdk-sns" % "1.11.521"
+
 enablePlugins(JavaAppPackaging, RiffRaffArtifact)
 
 topLevelDirectory in Universal := None
